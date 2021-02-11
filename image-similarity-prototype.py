@@ -10,15 +10,18 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 from datasets.Caltech256Dataset import Caltech256Dataset
+from datasets.TotallyLooksLikeDataset import TotallyLooksLikeDataset
 
 # Use GPU if possible
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 # device = 'cpu'
 
 
 def show_plot(iteration, loss):
     plt.plot(iteration, loss)
     plt.show()
+
 
 class SiameseNetwork(nn.Module):
 
@@ -73,6 +76,7 @@ class ContrastiveLoss(nn.Module):
 
         return loss_contrastive
 
+
 def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
     counter = []
     loss_history = []
@@ -99,7 +103,6 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
             # Update parameters
             optimizer.step()
 
-
             print(i)
 
             if debug and i % 10 == 0:
@@ -118,11 +121,13 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
 def save_model(network, path):
     torch.save(network.state_dict(), path)
 
+
 def load_model(path):
     network = SiameseNetwork()
     network = network.to(device)
     network.load_state_dict(torch.load(path))
     return network
+
 
 def test_same(network, crit):
     """
@@ -153,6 +158,7 @@ def test_same(network, crit):
     distance = crit(x1, x2)
     print(distance)
 
+
 def test_not_same(network, crit):
     """
     To be removed
@@ -179,6 +185,7 @@ def test_not_same(network, crit):
     distance = crit(x1, x2)
     print(distance)
 
+
 def do_initial_training():
     # Declare network and move to gpu if possible
     net = SiameseNetwork()
@@ -203,14 +210,23 @@ def do_initial_training():
         transforms.Resize((224, 224)),
         transforms.ToTensor()
     ])
-    
+
+    # amount of images to load
+    setSize = 6016
+
+    # # !!! Has to be changed
+    # root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\256_ObjectCategories\\256_ObjectCategories"
+    # dataset = Caltech256Dataset(
+    #     root_dir=root_dir, transform=transformations, should_invert=False)
+
     # !!! Has to be changed
-    root_dir = "D:/datasets/256_ObjectCategories/"
-    dataset = Caltech256Dataset(
-        root_dir=root_dir, transform=transformations, should_invert=False)
+    root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\TLL"
+    dataset = TotallyLooksLikeDataset(
+        root_dir=root_dir, setSize=setSize, transform=transformations)
 
     # Initialize Train dataloader
-    train_dataloader = DataLoader(dataset, shuffle=True, num_workers=0, batch_size=1)
+    train_dataloader = DataLoader(
+        dataset, shuffle=True, num_workers=0, batch_size=1)
 
     print("Start training")
 
