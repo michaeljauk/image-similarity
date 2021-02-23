@@ -211,9 +211,6 @@ def do_initial_training():
         transforms.ToTensor()
     ])
 
-    # amount of images to load
-    setSize = 6016
-
     # # !!! Has to be changed
     # root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\256_ObjectCategories\\256_ObjectCategories"
     # dataset = Caltech256Dataset(
@@ -222,7 +219,7 @@ def do_initial_training():
     # !!! Has to be changed
     root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\TLL"
     dataset = TotallyLooksLikeDataset(
-        root_dir=root_dir, setSize=setSize, transform=transformations)
+        root_dir=root_dir, transform=transformations)
 
     # Initialize Train dataloader
     train_dataloader = DataLoader(

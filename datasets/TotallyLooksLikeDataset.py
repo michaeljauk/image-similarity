@@ -7,16 +7,15 @@ import os
 
 
 class TotallyLooksLikeDataset(Dataset):
-    def __init__(self, root_dir, setSize, transform=None):
+    def __init__(self, root_dir, transform=None):
         self.root_dir = root_dir
         self.transform = transform
-        self.setSize = setSize
 
         self.leftfiles = os.listdir(root_dir + '/left')
         self.rightfiles = os.listdir(root_dir + '/right')
 
     def __len__(self):
-        return self.setSize
+        return len(self.leftfiles)
 
     def __getitem__(self, idx):
         # Train with 50% similar, 50% dissimilar:
