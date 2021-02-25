@@ -117,6 +117,25 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
     if debug:
         show_plot(counter, loss_history)
 
+# test accuracy of the network
+# 0 -> lowest accuracy
+# 1 -> highest accuracy
+
+
+def test(network, test_dataloader):
+    similarity = nn.CosineSimilarity()
+    with torch.no_grad():
+        sum_accuracy = 0
+        for i, data in enumerate(test_dataloader):
+            img0, img1, label = data
+            x1, x2 = network(img0, img1)
+            result = similarity(x1, x2)
+            if label == 0:
+                sum_accuracy += 1 - result
+            else:
+                sum_accuracy += result
+        return sum_accuracy / len(test_dataloader)
+
 
 def save_model(network, path):
     torch.save(network.state_dict(), path)
@@ -211,9 +230,6 @@ def do_initial_training():
         transforms.ToTensor()
     ])
 
-    # amount of images to load
-    setSize = 6016
-
     # # !!! Has to be changed
     # root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\256_ObjectCategories\\256_ObjectCategories"
     # dataset = Caltech256Dataset(
@@ -222,7 +238,7 @@ def do_initial_training():
     # !!! Has to be changed
     root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\TLL"
     dataset = TotallyLooksLikeDataset(
-        root_dir=root_dir, setSize=setSize, transform=transformations)
+        root_dir=root_dir, transform=transformations)
 
     # Initialize Train dataloader
     train_dataloader = DataLoader(
