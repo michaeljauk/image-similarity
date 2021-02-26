@@ -9,8 +9,8 @@ import cv2
 import matplotlib.pyplot as plt
 from PIL import Image
 
-from datasets.Caltech256Dataset import Caltech256Dataset
-from datasets.TotallyLooksLikeDataset import TotallyLooksLikeDataset
+import config
+import dataset as DS
 
 # Use GPU if possible
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -147,7 +147,7 @@ def load_model(path):
     network.load_state_dict(torch.load(path))
     return network
 
-
+# TODO: remove
 def test_same(network, crit):
     """
     To be removed
@@ -177,7 +177,7 @@ def test_same(network, crit):
     distance = crit(x1, x2)
     print(distance)
 
-
+# TODO: remove
 def test_not_same(network, crit):
     """
     To be removed
@@ -224,21 +224,8 @@ def do_initial_training():
     # epochs to train
     epochs = 2
 
-    # Initialize dataset
-    transformations = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor()
-    ])
-
-    # # !!! Has to be changed
-    # root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\256_ObjectCategories\\256_ObjectCategories"
-    # dataset = Caltech256Dataset(
-    #     root_dir=root_dir, transform=transformations, should_invert=False)
-
-    # !!! Has to be changed
-    root_dir = "C:\\Users\\Simon\\Documents\\Schule\\5. Schuljahr\\Image Similarity Detection\\TLL"
-    dataset = TotallyLooksLikeDataset(
-        root_dir=root_dir, transform=transformations)
+    # Get Dataset
+    dataset = DS.get_dataset('caltech_256')
 
     # Initialize Train dataloader
     train_dataloader = DataLoader(
@@ -248,7 +235,7 @@ def do_initial_training():
 
     train(net, criterion, optimizer, epochs, train_dataloader)
 
-    PATH = "./model"
+    PATH = config.model_path
 
     save_model(net, PATH)
 
