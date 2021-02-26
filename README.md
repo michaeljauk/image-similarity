@@ -2,8 +2,8 @@
 
 ## Implemented datasets
 
-1. [Caltech 256 Image Dataset](https://www.kaggle.com/jessicali9530/caltech256)
-2. Totally Looks Like Dataset
+1. [Caltech 256 Image Dataset](https://www.kaggle.com/jessicali9530/caltech256) (`caltech_256`)
+2. Totally Looks Like Dataset (`totally_looks_like`)
 
 ## Config
 
