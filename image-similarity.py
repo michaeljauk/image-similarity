@@ -188,6 +188,5 @@ def do_initial_training():
 def main():
     do_initial_training()
 
-
 if __name__ == "__main__":
     main()
