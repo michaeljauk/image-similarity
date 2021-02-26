@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 import config
-import dataset as DS
+from src.siamese_network import SiameseNetwork
+from src.contrastive_loss import ContrastiveLoss
+import src.dataset as DS
 
 # Use GPU if possible
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -21,61 +23,6 @@ device = torch.device('cpu')
 def show_plot(iteration, loss):
     plt.plot(iteration, loss)
     plt.show()
-
-
-class SiameseNetwork(nn.Module):
-
-    def __init__(self):
-        super(SiameseNetwork, self).__init__()
-
-        # Load pre-trained VGG-19; structure: https://images.app.goo.gl/MtYeQkBbpEtGfvQE8
-        self.model = torch.hub.load(
-            'pytorch/vision:v0.6.0', 'vgg19', pretrained=True)
-
-        # Remove last two FC layers
-        self.model.classifier = self.model.classifier[:-6]
-        # print(self.model)
-
-    def forward_once(self, x):
-        output = self.model(x)
-        return output
-
-    def forward(self, x1, x2):
-        output1 = self.forward_once(x1)
-        output2 = self.forward_once(x2)
-        return output1, output2
-
-
-class ContrastiveLoss(nn.Module):
-    """
-    Contrastive loss function; using cosine similarity instead of euclidian distance
-
-    TODO: look if this is right, as the cosine similarity calculates the angel between the two vectors; what we need?
-
-    Based on: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
-    """
-
-    def __init__(self, margin=2.0):
-        super(ContrastiveLoss, self).__init__()
-        self.cosine_similarity = nn.CosineSimilarity()
-        self.margin = margin
-
-    def forward(self, output1, output2, label):
-        """
-        Calculates contrastive loss using cosine similarity though.
-
-        output1: Output 1
-        output2: Output 2
-        label: Similarity label (0 if genuine, 1 if imposter)
-        """
-
-        cos_sim = self.cosine_similarity(output1, output2)
-        # euclidean_distance = F.pairwise_distance(output1, output2)1
-        loss_contrastive = torch.mean((1-label) * torch.pow(cos_sim, 2) +
-                                      (label) * torch.pow(torch.clamp(self.margin - cos_sim, min=0.0), 2))
-
-        return loss_contrastive
-
 
 def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
     counter = []
@@ -136,10 +83,8 @@ def test(network, test_dataloader):
                 sum_accuracy += result
         return sum_accuracy / len(test_dataloader)
 
-
 def save_model(network, path):
     torch.save(network.state_dict(), path)
-
 
 def load_model(path):
     network = SiameseNetwork()
@@ -204,7 +149,6 @@ def test_not_same(network, crit):
     distance = crit(x1, x2)
     print(distance)
 
-
 def do_initial_training():
     # Declare network and move to gpu if possible
     net = SiameseNetwork()
@@ -240,7 +184,6 @@ def do_initial_training():
     save_model(net, PATH)
 
     # test_same(net, criterion)
-
 
 def main():
     do_initial_training()

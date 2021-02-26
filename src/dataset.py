@@ -1,7 +1,8 @@
 import torchvision.transforms as transforms
 
-from datasets.Caltech256Dataset import Caltech256Dataset
-from datasets.TotallyLooksLikeDataset import TotallyLooksLikeDataset
+from .datasets.Caltech256Dataset import Caltech256Dataset
+from .datasets.TotallyLooksLikeDataset import TotallyLooksLikeDataset
+
 import config
 
 default_transformations = transforms.Compose([
