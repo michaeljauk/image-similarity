@@ -6,3 +6,5 @@ datasets = dict(
     caltech_256 = "PATH",
     totally_looks_like = "PATH"
 )
+
+model_path = "./model"
