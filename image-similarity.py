@@ -24,6 +24,7 @@ def show_plot(iteration, loss):
     plt.plot(iteration, loss)
     plt.show()
 
+
 def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
     counter = []
     loss_history = []
@@ -83,8 +84,10 @@ def test(network, test_dataloader):
                 sum_accuracy += result
         return sum_accuracy / len(test_dataloader)
 
+
 def save_model(network, path):
     torch.save(network.state_dict(), path)
+
 
 def load_model(path):
     network = SiameseNetwork()
@@ -93,6 +96,8 @@ def load_model(path):
     return network
 
 # TODO: remove
+
+
 def test_same(network, crit):
     """
     To be removed
@@ -123,6 +128,8 @@ def test_same(network, crit):
     print(distance)
 
 # TODO: remove
+
+
 def test_not_same(network, crit):
     """
     To be removed
@@ -149,6 +156,7 @@ def test_not_same(network, crit):
     distance = crit(x1, x2)
     print(distance)
 
+
 def do_initial_training():
     # Declare network and move to gpu if possible
     net = SiameseNetwork()
@@ -168,8 +176,16 @@ def do_initial_training():
     # epochs to train
     epochs = 2
 
-    # Get Dataset
-    dataset = DS.get_dataset('caltech_256')
+    # Get OIDv4 Dataset
+    # TODO: Test different configs
+    # TODO: Test if the tool even works, sometimes there are weird pictures inside the same category
+    # At least two classes need to be downloaded
+    dataset = DS.get_dataset('oidv4', dataset_config=dict(
+        sub="h",
+        classes="Tortoise Apple",
+        type_csv="train",
+        limit=30
+    ))
 
     # Initialize Train dataloader
     train_dataloader = DataLoader(
@@ -185,8 +201,10 @@ def do_initial_training():
 
     # test_same(net, criterion)
 
+
 def main():
     do_initial_training()
+
 
 if __name__ == "__main__":
     main()

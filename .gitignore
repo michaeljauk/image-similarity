@@ -54,3 +54,6 @@ docs/_build/
 
 # User-customized config file
 config.py
+
+# OID csv files
+OID
