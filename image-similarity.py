@@ -1,3 +1,4 @@
+import csv
 import torch
 import torch.nn as nn
 from torch import optim
@@ -16,13 +17,28 @@ import src.dataset as DS
 
 # Use GPU if possible
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # device = 'cpu'
 
 
 def show_plot(iteration, loss):
     plt.plot(iteration, loss)
     plt.show()
+
+def theleofunction(network, criterion, train_dataloader, debug=True):
+    with open('parameters.csv', 'w', newline='') as file:
+        writer = csv.writer(file, delimiter=';')
+        writer.writerow(["Learning rate", "Epochs", "Accuracy"])
+        for lr in range(10, 10000):
+            print("LR:",  lr)
+            for epochs in range(1, 4, 1):
+                print("Epoch", epochs)
+                optimizer = optim.Adam(network.parameters(), lr=(lr/10000.00))
+                train(network, criterion, optimizer, epochs, train_dataloader);
+                print("train")
+                accuracy = test(network, train_dataloader);
+                print("test")
+                writer.writerow([(lr/10000), epochs, accuracy.numpy()[0]])
 
 
 def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
@@ -62,8 +78,8 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
 
             del img0, img1, label
 
-    if debug:
-        show_plot(counter, loss_history)
+    #if debug:
+        #show_plot(counter, loss_history)
 
 # test accuracy of the network
 # 0 -> lowest accuracy
@@ -202,8 +218,47 @@ def do_initial_training():
     # test_same(net, criterion)
 
 
+def startleofunction():
+    # Declare network and move to gpu if possible
+    net = SiameseNetwork()
+    net.to(device)
+
+    # Loss function
+    criterion = ContrastiveLoss()
+
+    # Learning rate
+    lr = 0.0005
+
+    # Optimizer
+    # In this case: Adam
+    # TODO: Look if this is right
+    optimizer = optim.Adam(net.parameters(), lr=lr)
+
+    # epochs to train
+    epochs = 2
+
+    # Get OIDv4 Dataset
+    # TODO: Test different configs
+    # TODO: Test if the tool even works, sometimes there are weird pictures inside the same category
+    # At least two classes need to be downloaded
+    dataset = DS.get_dataset('caltech_256')
+
+    # Initialize Train dataloader
+    train_dataloader = DataLoader(
+        dataset, shuffle=True, num_workers=0, batch_size=1)
+
+    print("Start training")
+
+    theleofunction(net, criterion, train_dataloader)
+
+    PATH = config.model_path
+
+    save_model(net, PATH)
+    
+
 def main():
-    do_initial_training()
+    #do_initial_training()
+    startleofunction()
 
 
 if __name__ == "__main__":
