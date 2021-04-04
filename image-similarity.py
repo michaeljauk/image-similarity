@@ -176,16 +176,7 @@ def do_initial_training():
     # epochs to train
     epochs = 2
 
-    # Get OIDv4 Dataset
-    # TODO: Test different configs
-    # TODO: Test if the tool even works, sometimes there are weird pictures inside the same category
-    # At least two classes need to be downloaded
-    dataset = DS.get_dataset('oidv4', dataset_config=dict(
-        sub="h",
-        classes="Tortoise Apple",
-        type_csv="train",
-        limit=30
-    ))
+    dataset = DS.get_dataset('default')
 
     # Initialize Train dataloader
     train_dataloader = DataLoader(

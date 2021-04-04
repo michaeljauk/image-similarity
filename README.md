@@ -13,3 +13,6 @@
 ## ToDo
 - Split up Cal256 to Train, Test, Validation
 - Upload the split up Cal256 dataset somewhere
+- OIDv4:
+- - Test different configs
+- - Make tool iterate through all classes (stored inside the csv file)

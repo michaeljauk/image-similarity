@@ -1,6 +1,6 @@
 import torchvision.transforms as transforms
 
-from .datasets.Caltech256Dataset import Caltech256Dataset
+from .datasets.DefaultDataset import DefaultDataset
 from .datasets.TotallyLooksLikeDataset import TotallyLooksLikeDataset
 from .datasets.OIDv4Dataset import OIDv4Dataset
 
@@ -13,8 +13,8 @@ default_transformations = transforms.Compose([
 
 
 def get_dataset(dataset_name, transformations=default_transformations, should_invert=False, dataset_config=None):
-    if dataset_name == 'caltech_256':
-        return Caltech256Dataset(
+    if dataset_name == 'default':
+        return DefaultDataset(
             root_dir=config.dataset_paths[dataset_name],
             transform=transformations,
             should_invert=should_invert)

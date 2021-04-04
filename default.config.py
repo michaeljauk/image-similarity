@@ -3,7 +3,7 @@
 # - Rename this file to 'config.py'
 
 datasets = dict(
-    caltech_256="PATH",
+    default="PATH",  # works for caltech_256 and coco
     totally_looks_like="PATH",
     oidv4="PATH"  # should be absolute
 )
