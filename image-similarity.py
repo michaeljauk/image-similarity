@@ -26,20 +26,20 @@ def show_plot(iteration, loss):
     plt.show()
 
 
-def theleofunction(network, criterion, train_dataloader, learningratelist, epochlist, debug=True):
+def hyperparameter_optimization(network, criterion, train_dataloader, lr_list, epoch_list, debug=True):
     with open('parameters.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(["Learning rate", "Epochs", "Accuracy"])
-        for lr in learningratelist:
+        for lr in lr_list:
             print("LR:",  lr)
-            for epochs in epochlist:
+            for epochs in epoch_list:
                 print("Epoch", epochs)
-                optimizer = optim.Adam(network.parameters(), lr=(lr/10000.00))
-                train(network, criterion, optimizer, epochs, train_dataloader);
+                optimizer = optim.Adam(network.parameters(), lr=lr)
+                train(network, criterion, optimizer, epochs, train_dataloader)
                 print("train")
-                accuracy = test(network, train_dataloader);
+                accuracy = test(network, train_dataloader)
                 print("test")
-                writer.writerow([(lr/10000), epochs, accuracy.numpy()[0]])
+                writer.writerow([lr, epochs, accuracy.numpy()[0]])
 
 
 def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
@@ -171,7 +171,7 @@ def do_initial_training():
     # test_same(net, criterion)
 
 
-def startleofunction():
+def start_hyperparameter_optimization():
         # Declare network and move to gpu if possible
     net = SiameseNetwork()
     net.to(device)
@@ -205,7 +205,7 @@ def startleofunction():
     epochs = [1, 2, 3]
     learningrates = [1, 4, 10]
 
-    theleofunction(net, criterion, train_dataloader, learningrates, epochs)
+    hyperparameter_optimization(net, criterion, train_dataloader, learningrates, epochs)
 
     PATH = config.model_path
 
@@ -214,7 +214,7 @@ def startleofunction():
 
 def main():
     # do_initial_training()
-    # startleofunction()
+    # start_hyperparameter_optimization()
     net = SiameseNetwork()
     path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
     path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
