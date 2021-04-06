@@ -25,13 +25,13 @@ def show_plot(iteration, loss):
     plt.plot(iteration, loss)
     plt.show()
 
-def theleofunction(network, criterion, train_dataloader, debug=True):
+def theleofunction(network, criterion, train_dataloader, learningratelist, epochlist, debug=True):
     with open('parameters.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(["Learning rate", "Epochs", "Accuracy"])
-        for lr in range(10, 10000):
+        for lr in learningratelist:
             print("LR:",  lr)
-            for epochs in range(1, 4, 1):
+            for epochs in epochlist:
                 print("Epoch", epochs)
                 optimizer = optim.Adam(network.parameters(), lr=(lr/10000.00))
                 train(network, criterion, optimizer, epochs, train_dataloader);
@@ -227,15 +227,15 @@ def startleofunction():
     criterion = ContrastiveLoss()
 
     # Learning rate
-    lr = 0.0005
+    #lr = 0.0005
 
     # Optimizer
     # In this case: Adam
     # TODO: Look if this is right
-    optimizer = optim.Adam(net.parameters(), lr=lr)
+    #optimizer = optim.Adam(net.parameters(), lr=lr)
 
     # epochs to train
-    epochs = 2
+    #epochs = 2
 
     # Get OIDv4 Dataset
     # TODO: Test different configs
@@ -249,7 +249,10 @@ def startleofunction():
 
     print("Start training")
 
-    theleofunction(net, criterion, train_dataloader)
+    epochs = [1, 2, 3]
+    learningrates = [1, 4, 10]
+
+    theleofunction(net, criterion, train_dataloader, learningrates, epochs)
 
     PATH = config.model_path
 
