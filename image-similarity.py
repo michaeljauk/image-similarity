@@ -25,6 +25,7 @@ def show_plot(iteration, loss):
     plt.plot(iteration, loss)
     plt.show()
 
+
 def theleofunction(network, criterion, train_dataloader, debug=True):
     with open('parameters.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
@@ -34,9 +35,9 @@ def theleofunction(network, criterion, train_dataloader, debug=True):
             for epochs in range(1, 4, 1):
                 print("Epoch", epochs)
                 optimizer = optim.Adam(network.parameters(), lr=(lr/10000.00))
-                train(network, criterion, optimizer, epochs, train_dataloader);
+                train(network, criterion, optimizer, epochs, train_dataloader)
                 print("train")
-                accuracy = test(network, train_dataloader);
+                accuracy = test(network, train_dataloader)
                 print("test")
                 writer.writerow([(lr/10000), epochs, accuracy.numpy()[0]])
 
@@ -78,7 +79,7 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
 
             del img0, img1, label
 
-    #if debug:
+    # if debug:
         #show_plot(counter, loss_history)
 
 # test accuracy of the network
@@ -111,62 +112,23 @@ def load_model(path):
     network.load_state_dict(torch.load(path))
     return network
 
-# TODO: remove
 
-
-def test_same(network, crit):
-    """
-    To be removed
-    """
-
+def test_similarity(network, path1, path2):
     transformations = transforms.Compose([
         transforms.ToTensor()
     ])
 
     crit = nn.CosineSimilarity()
 
-    img1 = cv2.imread(
-        r"D:\Dokumente\Schule\Schulstufe_13\SYP-U\PyTorch\image-similarity-prototype\cube_1.jpg")
+    img1 = cv2.imread(path1)
     img1 = cv2.resize(img1, (224, 224))
     img1 = transformations(img1)
     img1 = img1.unsqueeze(0)
-    img1 = img1.to(device)
 
-    img2 = cv2.imread(
-        r"D:\Dokumente\Schule\Schulstufe_13\SYP-U\PyTorch\image-similarity-prototype\cube_1.jpg")
+    img2 = cv2.imread(path2)
     img2 = cv2.resize(img2, (224, 224))
     img2 = transformations(img2)
     img2 = img2.unsqueeze(0)
-    img2 = img2.to(device)
-
-    x1, x2 = network(img1, img2)
-    distance = crit(x1, x2)
-    print(distance)
-
-# TODO: remove
-
-
-def test_not_same(network, crit):
-    """
-    To be removed
-    """
-    transformations = transforms.Compose([
-        transforms.ToTensor()
-    ])
-
-    img1 = cv2.imread(
-        r"D:\Dokumente\Schule\Schulstufe_13\SYP-U\PyTorch\image-similarity-prototype\airpods.jpg")
-    img1 = cv2.resize(img1, (224, 224))
-    img1 = transformations(img1)
-    img1 = img1.unsqueeze(0)
-    img1 = img1.to(device)
-
-    img2 = cv2.imread(
-        r"D:\Dokumente\Schule\Schulstufe_13\SYP-U\PyTorch\image-similarity-prototype\cube_2.jpg")
-    img2 = cv2.resize(img2, (224, 224))
-    img2 = transformations(img2)
-    img2 = img2.unsqueeze(0)
-    img2 = img2.to(device)
 
     x1, x2 = network(img1, img2)
     distance = crit(x1, x2)
@@ -245,11 +207,15 @@ def startleofunction():
     PATH = config.model_path
 
     save_model(net, PATH)
-    
+
 
 def main():
-    #do_initial_training()
-    startleofunction()
+    # do_initial_training()
+    # startleofunction()
+    net = SiameseNetwork()
+    path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
+    path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
+    test_similarity(net, path1, path2)
 
 
 if __name__ == "__main__":
