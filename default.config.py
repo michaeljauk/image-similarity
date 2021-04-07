@@ -4,7 +4,6 @@
 
 datasets = dict(
     default="PATH",  # works for caltech_256
-    totally_looks_like="PATH",
     oid="PATH"  # should be absolute
 )
 

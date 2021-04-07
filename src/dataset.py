@@ -23,8 +23,3 @@ def get_dataset(dataset_name, transformations=default_transformations, should_in
             root_dir=config.datasets[dataset_name] + "/train",
             transform=transformations,
             should_invert=should_invert)
-
-    if dataset_name == 'totally_looks_like':
-        return TotallyLooksLikeDataset(
-            root_dir=config.datasets[dataset_name],
-            transform=transformations)
