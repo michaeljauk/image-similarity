@@ -5,11 +5,7 @@
 datasets = dict(
     default="PATH",  # works for caltech_256
     totally_looks_like="PATH",
-    oidv4="PATH"  # should be absolute
-)
-
-tools = dict(
-    oidv4_toolkit="PATH"
+    oid="PATH"  # should be absolute
 )
 
 model_path = "./model"

@@ -14,6 +14,7 @@ import config
 from src.siamese_network import SiameseNetwork
 from src.contrastive_loss import ContrastiveLoss
 import src.dataset as DS
+from download_oid import download_oid
 
 # Use GPU if possible
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -35,9 +36,9 @@ def theleofunction(network, criterion, train_dataloader, learningratelist, epoch
             for epochs in epochlist:
                 print("Epoch", epochs)
                 optimizer = optim.Adam(network.parameters(), lr=(lr/10000.00))
-                train(network, criterion, optimizer, epochs, train_dataloader);
+                train(network, criterion, optimizer, epochs, train_dataloader)
                 print("train")
-                accuracy = test(network, train_dataloader);
+                accuracy = test(network, train_dataloader)
                 print("test")
                 writer.writerow([(lr/10000), epochs, accuracy.numpy()[0]])
 
@@ -172,7 +173,7 @@ def do_initial_training():
 
 
 def startleofunction():
-        # Declare network and move to gpu if possible
+    # Declare network and move to gpu if possible
     net = SiameseNetwork()
     net.to(device)
 
@@ -214,11 +215,15 @@ def startleofunction():
 
 def main():
     # do_initial_training()
+
     # startleofunction()
-    net = SiameseNetwork()
-    path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
-    path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
-    test_similarity(net, path1, path2)
+
+    #net = SiameseNetwork()
+    #path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
+    #path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
+    #test_similarity(net, path1, path2)
+
+    download_oid(config.datasets['oid'])
 
 
 if __name__ == "__main__":
