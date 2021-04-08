@@ -14,6 +14,7 @@ import config
 from src.siamese_network import SiameseNetwork
 from src.contrastive_loss import ContrastiveLoss
 import src.dataset as DS
+from download_oid import download_oid
 
 # Use GPU if possible
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -219,6 +220,15 @@ def main():
     path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
     path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
     test_similarity(net, path1, path2)
+
+    # startleofunction()
+
+    #net = SiameseNetwork()
+    #path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
+    #path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
+    #test_similarity(net, path1, path2)
+
+    download_oid(config.datasets['oid'])
 
 
 if __name__ == "__main__":

@@ -55,5 +55,5 @@ docs/_build/
 # User-customized config file
 config.py
 
-# OID csv files
-OID
+# Automatically downloaded csv for OID
+OID/csv_folder_nl/train-annotations-human-imagelabels.csv
