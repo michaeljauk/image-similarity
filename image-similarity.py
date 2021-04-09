@@ -88,11 +88,11 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
 # 1 -> highest accuracy
 
 
-def computeNetworkAccuracy(network, test_dataloader):
+def computeNetworkAccuracy(network, criterion, test_dataloader):
     similarity = nn.CosineSimilarity()
+    sum_accuracy = 0
     with torch.no_grad():
         network.eval()
-        sum_accuracy = 0
         for i, data in enumerate(test_dataloader):
             img0, img1, label = data
             x1, x2 = network(img0, img1)
@@ -101,7 +101,8 @@ def computeNetworkAccuracy(network, test_dataloader):
                 sum_accuracy += 1 - result
             else:
                 sum_accuracy += result
-        return sum_accuracy / len(test_dataloader)
+            loss = criterion(x1, x2, label)
+    return sum_accuracy / len(test_dataloader), loss.data
 
 
 def save_model(network, path):
