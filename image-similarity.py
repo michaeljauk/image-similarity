@@ -38,7 +38,8 @@ def hyperparameter_optimization(network, criterion, train_dataloader, test_datal
                 optimizer = optim.Adam(network.parameters(), lr=lr)
                 train(network, criterion, optimizer, epochs, train_dataloader)
                 print("train")
-                accuracy = computeNetworkAccuracy(network, test_dataloader)
+                accuracy, loss = computeNetworkAccuracy(
+                    network, test_dataloader)
                 print("test")
                 writer.writerow([lr, epochs, accuracy.numpy()[0]])
 
