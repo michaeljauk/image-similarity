@@ -27,7 +27,7 @@ def show_plot(iteration, loss):
     plt.show()
 
 
-def hyperparameter_optimization(network, criterion, train_dataloader, lr_list, epoch_list, debug=True):
+def hyperparameter_optimization(network, criterion, train_dataloader, test_dataloader, lr_list, epoch_list, debug=True):
     with open('parameters.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(["Learning rate", "Epochs", "Accuracy"])
@@ -38,7 +38,7 @@ def hyperparameter_optimization(network, criterion, train_dataloader, lr_list, e
                 optimizer = optim.Adam(network.parameters(), lr=lr)
                 train(network, criterion, optimizer, epochs, train_dataloader)
                 print("train")
-                accuracy = test(network, train_dataloader)
+                accuracy = computeNetworkAccuracy(network, test_dataloader)
                 print("test")
                 writer.writerow([lr, epochs, accuracy.numpy()[0]])
 
@@ -83,14 +83,15 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
     # if debug:
         #show_plot(counter, loss_history)
 
-# test accuracy of the network
+# compute accuracy of the network
 # 0 -> lowest accuracy
 # 1 -> highest accuracy
 
 
-def test(network, test_dataloader):
+def computeNetworkAccuracy(network, test_dataloader):
     similarity = nn.CosineSimilarity()
     with torch.no_grad():
+        network.eval()
         sum_accuracy = 0
         for i, data in enumerate(test_dataloader):
             img0, img1, label = data
@@ -173,7 +174,7 @@ def do_initial_training():
 
 
 def start_hyperparameter_optimization():
-        # Declare network and move to gpu if possible
+    # Declare network and move to gpu if possible
     net = SiameseNetwork()
     net.to(device)
 
@@ -206,7 +207,8 @@ def start_hyperparameter_optimization():
     epochs = [1, 2, 3]
     learningrates = [1, 4, 10]
 
-    hyperparameter_optimization(net, criterion, train_dataloader, learningrates, epochs)
+    # hyperparameter_optimization(
+    #     net, criterion, train_dataloader, test_dataloader, learningrates, epochs)
 
     PATH = config.model_path
 
