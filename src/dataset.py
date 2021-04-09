@@ -1,7 +1,6 @@
 import torchvision.transforms as transforms
 
 from .datasets.DefaultDataset import DefaultDataset
-from .datasets.TotallyLooksLikeDataset import TotallyLooksLikeDataset
 
 import config
 
