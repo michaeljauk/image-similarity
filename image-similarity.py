@@ -92,6 +92,7 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
 def computeNetworkAccuracy(network, criterion, test_dataloader):
     similarity = nn.CosineSimilarity()
     sum_accuracy = 0
+    sum_loss = 0
     with torch.no_grad():
         network.eval()
         for i, data in enumerate(test_dataloader):
@@ -102,8 +103,8 @@ def computeNetworkAccuracy(network, criterion, test_dataloader):
                 sum_accuracy += 1 - result
             else:
                 sum_accuracy += result
-            loss = criterion(x1, x2, label)
-    return sum_accuracy / len(test_dataloader), loss.data
+            sum_loss += criterion(x1, x2, label)
+    return sum_accuracy / len(test_dataloader), sum_loss.data / len(test_dataloader)
 
 
 def save_model(network, path):
