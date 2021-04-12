@@ -14,7 +14,6 @@ import config
 from src.siamese_network import SiameseNetwork
 from src.contrastive_loss import ContrastiveLoss
 import src.dataset as DS
-from download_oid import download_oid
 
 #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # cuda doesnt really work when training on our machines
