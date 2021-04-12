@@ -7,7 +7,7 @@
 All useful things are contained in the `image-similarity` notebook.
 
 
-# Depracted
+# Deprecated
 ## ~Config~
 
 1. Make a copy of `default.config.py` and rename it to `config.py`
