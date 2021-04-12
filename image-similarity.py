@@ -16,10 +16,9 @@ from src.contrastive_loss import ContrastiveLoss
 import src.dataset as DS
 from download_oid import download_oid
 
-# Use GPU if possible
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# device = 'cpu'
+#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# cuda doesnt really work when training on our machines
+device = torch.device('cpu')
 
 
 def show_plot(iteration, loss):
@@ -37,10 +36,8 @@ def hyperparameter_optimization(network, criterion, train_dataloader, test_datal
                 print("Epoch", epochs)
                 optimizer = optim.Adam(network.parameters(), lr=lr)
                 train(network, criterion, optimizer, epochs, train_dataloader)
-                print("train")
                 accuracy, loss = computeNetworkAccuracy(
                     network, test_dataloader)
-                print("test")
                 writer.writerow([lr, epochs, accuracy.numpy()[0]])
 
 
@@ -89,22 +86,34 @@ def train(network, criterion, optimizer, epochs, train_dataloader, debug=True):
 # 1 -> highest accuracy
 
 
-def computeNetworkAccuracy(network, criterion, test_dataloader):
+def computeNetworkAccuracy(network, criterion, validation_dataloader):
     similarity = nn.CosineSimilarity()
-    sum_accuracy = 0
+    sum_accuracy = torch.zeros([32], dtype=torch.float)
     sum_loss = 0
+
+    sum_accuracy = sum_accuracy.to(device)
+
     with torch.no_grad():
         network.eval()
-        for i, data in enumerate(test_dataloader):
+        for i, data in enumerate(validation_dataloader):
             img0, img1, label = data
+            img0 = img0.to(device)
+            img1 = img1.to(device)
+            label = label.to(device)
             x1, x2 = network(img0, img1)
+            x1 = x1.to(device)
+            x2 = x2.to(device)
             result = similarity(x1, x2)
-            if label == 0:
-                sum_accuracy += 1 - result
-            else:
-                sum_accuracy += result
+
+            for i, label_val in enumerate(label.data):
+                if label_val == 0:
+                    sum_accuracy.data[i] += 1 - result.data[i]
+                else:
+                    sum_accuracy.data[i] += result.data[i]
+
             sum_loss += criterion(x1, x2, label)
-    return sum_accuracy / len(test_dataloader), sum_loss.data / len(test_dataloader)
+
+    return sum_accuracy / len(validation_dataloader), sum_loss.data / len(validation_dataloader)
 
 
 def save_model(network, path):
@@ -153,7 +162,6 @@ def do_initial_training():
 
     # Optimizer
     # In this case: Adam
-    # TODO: Look if this is right
     optimizer = optim.Adam(net.parameters(), lr=lr)
 
     # epochs to train
@@ -173,8 +181,6 @@ def do_initial_training():
 
     save_model(net, PATH)
 
-    # test_same(net, criterion)
-
 
 def start_hyperparameter_optimization():
     # Declare network and move to gpu if possible
@@ -184,21 +190,6 @@ def start_hyperparameter_optimization():
     # Loss function
     criterion = ContrastiveLoss()
 
-    # Learning rate
-    #lr = 0.0005
-
-    # Optimizer
-    # In this case: Adam
-    # TODO: Look if this is right
-    #optimizer = optim.Adam(net.parameters(), lr=lr)
-
-    # epochs to train
-    #epochs = 2
-
-    # Get OIDv4 Dataset
-    # TODO: Test different configs
-    # TODO: Test if the tool even works, sometimes there are weird pictures inside the same category
-    # At least two classes need to be downloaded
     dataset = DS.get_dataset('caltech_256')
 
     # Initialize Train dataloader
@@ -225,13 +216,6 @@ def main():
     path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
     path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
     test_similarity(net, path1, path2)
-
-    # startleofunction()
-
-    #net = SiameseNetwork()
-    #path1 = r"C:\Users\Simon\Documents\Temporary\5.jpg"
-    #path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
-    #test_similarity(net, path1, path2)
 
 
 if __name__ == "__main__":
