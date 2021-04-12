@@ -233,8 +233,6 @@ def main():
     #path2 = r"C:\Users\Simon\Documents\Temporary\6.jpg"
     #test_similarity(net, path1, path2)
 
-    download_oid(config.datasets['oid'])
-
 
 if __name__ == "__main__":
     main()

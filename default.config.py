@@ -4,7 +4,6 @@
 
 datasets = dict(
     default="PATH",  # works for caltech_256
-    oid="PATH"  # should be absolute
 )
 
 model_path = "./model"
